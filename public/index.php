@@ -4,7 +4,7 @@ require_once '../vendor/autoload.php';
 require_once '../config/config.php';
 
 // Initialisation de l'application
-$router = new App\Core\Router();
+$router = App\core\Router::getRouter();
 require_once '../config/routes.php';
 
 $router->dispatch();

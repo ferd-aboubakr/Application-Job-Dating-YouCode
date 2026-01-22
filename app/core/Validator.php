@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Core\Database;
+
 class Validator
 {
     private $errors = [];
@@ -140,7 +142,8 @@ class Validator
     {
         try {
             $db = Database::getInstance();
-            return $db->query("SELECT COUNT(*) FROM {$table} WHERE {$column} = ?", [$value])->fetchColumn() > 0;
+            $stmt = $db->query("SELECT COUNT(*) FROM {$table} WHERE {$column} = ?", [$value]);
+            return $stmt->fetchColumn() > 0;
         } catch (\Exception $e) {
             return false;
         }

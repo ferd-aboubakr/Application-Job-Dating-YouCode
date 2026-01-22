@@ -10,11 +10,11 @@ class Session
     {
         //Session start
         if (session_status() === PHP_SESSION_NONE) {
-            ini_set('session.gc_maxlifetime', 1800);
+            ini_set('session.gc_maxlifetime', 7200); // 2 hours
 
             // cookies
             session_set_cookie_params([
-                'lifetime' => 1800,
+                'lifetime' => 7200, // 2 hours
                 'path' => '/',
                 'domain' => '',
                 'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
@@ -28,7 +28,18 @@ class Session
         if (!isset($_SESSION['initiated'])) {
             session_regenerate_id(true);
             $_SESSION['initiated'] = true;
+            $_SESSION['last_activity'] = time();
         }
+
+        // Check for session expiration (2 hours)
+        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 7200)) {
+            $this->destroy();
+            header('Location: /login');
+            exit;
+        }
+
+        // Update last activity time
+        $_SESSION['last_activity'] = time();
     }
 
     /**
